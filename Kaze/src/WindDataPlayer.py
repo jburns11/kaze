@@ -20,7 +20,8 @@ PPRZ_SIM_OFFSET_Y = 10  # Relative starting position to 0,0 of udales sim
 
 
 class WindDataPlayer:
-    """Class to simulate wind data in a paparazzi environment."""
+    """Class to read generated wind data and send WORLD_ENV messages on the ivy bus.
+    This wind sent is the wind in at the uavs current position."""
 
     def __init__(self, sim_run_time):
         """
