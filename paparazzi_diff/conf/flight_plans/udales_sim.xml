@@ -1,0 +1,89 @@
+<!DOCTYPE flight_plan SYSTEM "flight_plan.dtd">
+
+<flight_plan alt="162" ground_alt="147" lat0="43.564119" lon0="1.481281" max_dist_from_home="1000" name="Rotorcraft Basic (Enac)" security_height="50">
+  <header>
+#include "autopilot.h"
+  </header>
+  <atmosphere>
+      <humidity min="5.0" max="30.0"/>
+      <pressure min="95500" max="103000"/>
+      <temperature min="0.0001" max="0.1000"/>
+      <roughness min="255" max="311"/>
+      <xwind min="1.5" max="11"/>
+      <ywind min="1.5" max="11"/>
+  </atmosphere>
+  <waypoints>
+    <waypoint name="HOME" x="0.0" y="0.0" height="25.0"/>
+
+    <waypoint name="SIM_SPACE_1" x="-50" y="-10" height="0"/>
+    <waypoint name="SIM_SPACE_2" x="50" y="90" height="100"/>
+
+    <!-- BUILDING 1 -->
+    <waypoint name="b1_p1" x="-50" y="-10" height="0"/>
+    <waypoint name="b1_p2" x="-10" y="90" height="BUILDING_HEIGHT_1"/>
+
+    <!-- BUILDING 2 -->
+    <waypoint name="b2_p1" x="10" y="-10" height="0"/>
+    <waypoint name="b2_p2" x="50" y="90" height="BUILDING_HEIGHT_2"/>
+
+    <waypoint name="wp1" x="0.0" y="70.0" height="25.0"/>
+  </waypoints>
+  <sectors>
+    <sim_space name="SIM_SPACE" color="red">
+      <corner name="SIM_SPACE_1"/>
+      <corner name="SIM_SPACE_2"/>
+    </sim_space>
+    <building name="BUILDING_1">
+      <corner name="b1_p1"/>
+      <corner name="b1_p2"/>
+    </building>
+    <building name="BUILDING_2">
+      <corner name="b2_p1"/>
+      <corner name="b2_p2"/>
+    </building>
+  </sectors>
+  <variables>
+    <variable var="BUILDING_HEIGHT_1" min="20" max="40"/>
+    <variable var="BUILDING_HEIGHT_2" min="20" max="40"/>
+
+    <variable var="VPGAIN_VAR" init="283"/> <!--min="248" max="298"/> 283-->
+    <variable var="VDGAIN_VAR" init="82"/> <!--min="67" max="97"/> 82-->
+    <variable var="VIGAIN_VAR" init="13"/> <!--min="0" max="28"/> 13-->
+
+    <variable var="HPGAIN_VAR" init="79"/> <!--min="64" max="94"/> 79-->
+    <variable var="HDGAIN_VAR" init="100"/> <!--min="85" max="115"/> 100-->
+    <variable var="HIGAIN_VAR" init="30"/> <!--min="15" max="45"/> 30-->
+  </variables>
+  <blocks>
+    <block name="Wait GPS">
+      <call_once fun="NavKillThrottle()"/>
+      <while cond="!GpsFixValid()"/>
+    </block>
+    <block name="Geo init">
+      <while cond="LessThan(NavBlockTime(), 10)"/>
+      <call_once fun="NavSetGroundReferenceHere()"/>
+    </block>
+    <block name="Holding point">
+      <call_once fun="NavKillThrottle()"/>
+    </block>
+    <block name="Start Engine">
+      <call_once fun="NavResurrect()"/>
+    </block>
+    <block name="Takeoff" objective="Negative">
+      <exception cond="stateGetPositionEnu_f() @DEREF z @GT 10.0" deroute="Standby"/>
+      <call_once fun="NavSetWaypointHere(WP_HOME)"/>
+      <stay vmode="climb" climb="2" wp="HOME"/>
+    </block>
+    <block name="Standby">
+      <stay wp="HOME" until="stage_time @GT 2"/>
+    </block>
+    <block name="Path" objective="Negative">
+      <path wpts="HOME, wp1"/>
+    </block>
+    <block name="Land" objective="Negative">
+      <call_once fun="NavStartDetectGround()"/>
+      <stay climb="-0.5" vmode="climb" wp="wp1" until="stateGetPositionEnu_f() @DEREF z @LT 0.5"/>
+      <attitude pitch="0" roll="0" throttle="0" vmode="throttle" until="FALSE"/>
+    </block>
+  </blocks>
+</flight_plan>

@@ -1,0 +1,69 @@
+<!-- sim_run_time - Total run time of simulation-->
+<!-- udales_input - Udales input files -->
+<!-- pprz_base_trace - Base trace of windless pprz sim -->
+<!-- num_procs - Number of process -->
+<!-- start_sim_num - Starting sim number (i.e, if generation size if 10,
+                     then 1st batch is 0, next batch is 11...) -->
+<kaze_batch sim_run_time="71"
+            udales_input="./input/udales_input/001"
+            pprz_base_trace="./input/base_trace/23_02_01__20_35_40.data"
+            num_procs="6"
+            start_sim_num="1"
+            population="1"
+            nsga2_pop="5"
+            nsga2_num_gen="10">
+
+    <instance name="1">
+        <!--
+        Must be a comma seperated list of length 17. Building heights should be between 10 and 30
+        -->
+        <building_heights>
+       		20,
+       		25,
+       		21,
+       		19,
+       		22,
+       		29,
+       		21,
+       		25,
+       		22,
+       		15,
+       		25,
+       		21,
+       		26,
+       		15,
+       		20,
+       		12,
+       		19,
+       		25,
+       		20,
+       		15,
+       		25,
+       		21,
+       		26,
+       		15,
+       		20,
+       		12,
+       		30,
+       		28
+        </building_heights>
+
+        <!-- Used to differentiate between experiments -->
+        <sim_num> 1 </sim_num>
+
+        <!-- Surface pressure (min: 98000, max: 103000, step: 1), -->
+        <surf_pressure> 101420 </surf_pressure>
+
+        <!-- Surface roughness (min: 0.0001, max: 0.1, step: 0.0001) -->
+        <surf_roughness> 0.01 </surf_roughness>
+
+        <!-- Surface temperature (min: 280, max: 370, step: 1) -->
+        <surf_temp> 330 </surf_temp>
+
+        <!-- Initial horizontal windspeed (min: 1.5, max: 20.0, step: 0.1)-->
+        <init_wind_speed_h> 15 </init_wind_speed_h>
+
+        <!-- Initial vertical windspeed (min: 0.5, max: 3.0, step: 0.1) -->
+        <init_wind_speed_v> 1.5 </init_wind_speed_v>
+    </instance>
+</kaze_batch>

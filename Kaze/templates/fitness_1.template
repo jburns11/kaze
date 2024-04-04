@@ -1,0 +1,10 @@
+<kaze_fitness>
+    <batch>
+        <name>batch_1</name>
+        <fitness>
+            <sim_num>1</sim_num>
+            <position>0.7252451240087342<position>
+            <collision>True<collision>
+        </fitness>
+    </batch>
+</kaze_fitnsess>
