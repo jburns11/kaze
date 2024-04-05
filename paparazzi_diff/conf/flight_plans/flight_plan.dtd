@@ -1,10 +1,22 @@
 <!-- Paparazzi flight plan DTD -->
 
-<!ELEMENT flight_plan (header?,atmosphere?,waypoints,sectors?,variables?,modules?,includes?,exceptions?,blocks)>
+<!ELEMENT flight_plan (header?,atmosphere?,optimization?,waypoints,sectors?,variables?,modules?,includes?,exceptions?,blocks)>
 
 <!ELEMENT procedure (param*,header?,waypoints?,sectors?,exceptions?,blocks?)>
 
 <!ELEMENT header (#PCDATA)>
+
+
+<!ELEMENT optimization (sim_run_time?,udales_input?,pprz_base_trace?,num_cpus?,start_sim_num?,population?,nsga2_pop?,nsga2_num_gen?,batch_name?)>
+<!ELEMENT sim_run_time EMPTY>
+<!ELEMENT udales_input EMPTY>
+<!ELEMENT pprz_base_trace EMPTY>
+<!ELEMENT num_cpus EMPTY>
+<!ELEMENT start_sim_num EMPTY>
+<!ELEMENT population EMPTY>
+<!ELEMENT nsga2_pop EMPTY>
+<!ELEMENT nsga2_num_gen EMPTY>
+<!ELEMENT batch_name EMPTY>
 
 <!ELEMENT atmosphere (humidity?,pressure?,temperature?,roughness?,xwind?,ywind?)>
 <!ELEMENT humidity EMPTY>

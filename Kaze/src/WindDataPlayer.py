@@ -36,7 +36,6 @@ class WindDataPlayer:
         self.msg["gps_availability"] = 1  # the value is preset
         self.msg["ir_contrast"] = 400  # the value is user defined
         self.ivy = IvyMessagesInterface(start_ivy=False)
-        self.time = 0
 
     def set_input_path(self, inputPath):
         """
@@ -47,12 +46,11 @@ class WindDataPlayer:
         """
         self.wind_parser = WindDataParser(inputPath)
 
-    def worldenv_cb(self, ac_id, msg):
+    def worldenv_cb(self, _, msg):
         """
         Callback function for world environment.
 
         Parameters:
-        - ac_id: Aircraft ID.
         - msg: Message.
         """
         # Must rotate coordinates
@@ -67,7 +65,6 @@ class WindDataPlayer:
         self.msg["wind_north"] = wind_north
         self.msg["wind_up"] = wind_up
         self.ivy.send(self.msg, None)
-        self.time += 1
 
     def start(self):
         """Start wind data simulation."""

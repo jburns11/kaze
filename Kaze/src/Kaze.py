@@ -1,52 +1,23 @@
-from src.WindDataGenerator import WindDataGenerator
-from src.PaparazziHelper import PaparazziHelper
-from src.WindDataPlayer import WindDataPlayer
-from src.FitnessCalculator import FitnessCalculator
-import xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup
-import argparse
 import os.path
-
-import csv
 import os
-import subprocess
 import time
+import xml.etree.ElementTree as ET
 
-PPRZ_SRC = os.getenv(
-    "PAPARAZZI_SRC",
-    os.path.normpath(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../")
-    ),
-)
-EXEC_PATH = os.getenv(
-    "EXEC_PATH",
-    os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "./")),
-)
-
-BATCH_NAME = "batch_1"
-
-
-def is_float(string):
-    try:
-        float(string)
-        return True
-    except ValueError:
-        return False
+from src.PaparazziHelper import PaparazziHelper
+from src.FitnessCalculator import FitnessCalculator
+from src.WindDataGenerator import WindDataGenerator
+from src.WindDataPlayer import WindDataPlayer
+from src import Common as com
 
 
 class Kaze:
     def __init__(self, kazeConfig):
         self.kazeConfig = kazeConfig
-        self.batch_name = kazeConfig.batch_name
-        self.num_cpu = kazeConfig.num_cpu
-        self.ac_name = kazeConfig.ac_name
-        self.ac_id = kazeConfig.ac_id
-        self.sim_run_time = kazeConfig.sim_run_time
-        self.logs_dir = PPRZ_SRC + "/var/logs/"
+        self.logs_dir = com.PPRZ_SRC + "/var/logs/"
         self.fitness_calculator = FitnessCalculator(
-            self.kazeConfig.base_sim_trace, self.kazeConfig.test_blocks
+            self.kazeConfig.pprz_base_trace, self.kazeConfig.test_blocks
         )
-        self.wind_player = WindDataPlayer(self.sim_run_time)
+        self.wind_player = WindDataPlayer(self.kazeConfig.sim_run_time)
 
     def set_sim_params(self, kazeInput):
         self.kazeInput = kazeInput
@@ -58,11 +29,11 @@ class Kaze:
         if len(self.kazeInput.fp_vars) == 0:
             os.system(
                 "cp "
-                + PPRZ_SRC
+                + com.PPRZ_SRC
                 + "/conf/flight_plans/"
                 + self.kazeConfig.fp_name
                 + " "
-                + PPRZ_SRC
+                + com.PPRZ_SRC
                 + "/conf/flight_plans/"
                 + self.kazeConfig.fp_name[:-4]
                 + self.sim_num_str
@@ -71,11 +42,11 @@ class Kaze:
         else:
             os.system(
                 "cp "
-                + PPRZ_SRC
+                + com.PPRZ_SRC
                 + "/conf/flight_plans/"
                 + self.kazeConfig.fp_name
                 + " "
-                + PPRZ_SRC
+                + com.PPRZ_SRC
                 + "/conf/flight_plans/"
                 + self.kazeConfig.fp_name[:-4]
                 + self.sim_num_str
@@ -84,7 +55,7 @@ class Kaze:
             input_index = 0
             for var in self.kazeConfig.fp_vars:
                 tree = ET.parse(
-                    PPRZ_SRC
+                    com.PPRZ_SRC
                     + "/conf/flight_plans/"
                     + self.kazeConfig.fp_name[:-4]
                     + self.sim_num_str
@@ -103,7 +74,7 @@ class Kaze:
                                 variable.attrib.pop("max", None)
                                 input_index += 1
                 tree.write(
-                    PPRZ_SRC
+                    com.PPRZ_SRC
                     + "/conf/flight_plans/"
                     + self.kazeConfig.fp_name[:-4]
                     + self.sim_num_str
@@ -111,7 +82,7 @@ class Kaze:
                 )
 
     def generate_conf(self):
-        tree = ET.parse(PPRZ_SRC + "/conf/conf.xml")
+        tree = ET.parse(com.PPRZ_SRC + "/conf/conf.xml")
         root = tree.getroot()
         fp = ""
         for i in root:
@@ -119,7 +90,7 @@ class Kaze:
                 i.set(
                     "flight_plan", "flight_plans/udales_sim" + self.sim_num_str + ".xml"
                 )
-        tree.write(PPRZ_SRC + "/conf/conf.xml")
+        tree.write(com.PPRZ_SRC + "/conf/conf.xml")
         return
 
     def parse_buildings(self):
@@ -127,42 +98,42 @@ class Kaze:
         i = 0
         var_i = 0
         for building in self.kazeConfig.buildings:
-            if not is_float(building[0][0]):
+            if not com.is_float(building[0][0]):
                 # look up var
                 buildings[i][0][0] = float(self.kazeInput.fp_vars[var_i])
                 var_i += 1
             else:
                 buildings[i][0][0] = float(building[0][0])
 
-            if not is_float(building[0][1]):
+            if not com.is_float(building[0][1]):
                 # look up var
                 buildings[i][0][1] = float(self.kazeInput.fp_vars[var_i])
                 var_i += 1
             else:
                 buildings[i][0][1] = float(building[0][1])
 
-            if not is_float(building[1][0]):
+            if not com.is_float(building[1][0]):
                 # look up var
                 buildings[i][1][0] = float(self.kazeInput.fp_vars[var_i])
                 var_i += 1
             else:
                 buildings[i][1][0] = float(building[1][0])
 
-            if not is_float(building[1][1]):
+            if not com.is_float(building[1][1]):
                 # look up var
-                buildings[i][1][1] = float(self.kazeInput.fp_vars[var_i])
+                builcom.dings[i][1][1] = float(self.kazeInput.fp_vars[var_i])
                 var_i += 1
             else:
                 buildings[i][1][1] = float(building[1][1])
 
-            if not is_float(building[2][0]):
+            if not com.is_float(building[2][0]):
                 # look up var
                 buildings[i][2][0] = float(self.kazeInput.fp_vars[var_i])
                 var_i += 1
             else:
                 buildings[i][2][0] = float(building[2][0])
 
-            if not is_float(building[2][1]):
+            if not com.is_float(building[2][1]):
                 # look up var
                 buildings[i][2][1] = float(self.kazeInput.fp_vars[var_i])
                 var_i += 1
@@ -201,9 +172,9 @@ class Kaze:
         # Create wind player
         windfile = ""
         if os.path.exists(
-            EXEC_PATH
+            com.EXEC_PATH
             + "Kaze/var/"
-            + self.batch_name
+            + self.kazeConfig.batch_name
             + "/"
             + str(self.sim_num_str)
             + "/out/udales/"
@@ -212,24 +183,24 @@ class Kaze:
             + ".nc"
         ):
             windfile = (
-                EXEC_PATH
+                com.EXEC_PATH
                 + "Kaze/var/"
-                + self.batch_name
-                + "/"
-                + str(self.sim_num_str)
+                + self.kazeConfig.batch_name
                 + "/out/udales/"
+                + str(self.sim_num_str)
+                + "/"
                 + "fielddump."
                 + str(self.sim_num_str)
                 + ".nc"
             )
         else:
             windfile = (
-                EXEC_PATH
+                com.EXEC_PATH
                 + "Kaze/var/"
-                + self.batch_name
-                + "/"
-                + str(self.sim_num_str)
+                + self.kazeConfig.batch_name
                 + "/out/udales/"
+                + str(self.sim_num_str)
+                + "/"
                 + "fielddump.000."
                 + str(self.sim_num_str)
                 + ".nc"
@@ -238,13 +209,13 @@ class Kaze:
         self.wind_player.set_input_path(windfile)
 
         # Create pprz simulator
-        self.pprz_sim = PaparazziHelper(self.ac_name, self.ac_id)
+        self.pprz_sim = PaparazziHelper(self.kazeConfig.ac_name)
 
         # Run simulation
         self.pprz_sim.run_sim()
         # Play wind
-        self.wind_player.play()
-        time.sleep(self.sim_run_time)
+        self.wind_player.start()
+        time.sleep(self.kazeConfig.sim_run_time)
         self.pprz_sim.kill_sim()
         self.wind_player.kill()
 
@@ -265,9 +236,9 @@ class Kaze:
     def clean_pprz(self):
         os.system(
             "mkdir "
-            + EXEC_PATH
+            + com.EXEC_PATH
             + "Kaze/var/"
-            + self.batch_name
+            + self.kazeConfig.batch_name
             + "/"
             + self.sim_num_str
             + "/out/pprz/"
@@ -277,9 +248,9 @@ class Kaze:
             "cp "
             + self.logs_dir
             + "/* "
-            + EXEC_PATH
+            + com.EXEC_PATH
             + "Kaze/var/"
-            + self.batch_name
+            + self.kazeConfig.batch_name
             + "/"
             + self.sim_num_str
             + "/out/pprz/"

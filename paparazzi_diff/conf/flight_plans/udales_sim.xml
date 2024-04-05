@@ -4,6 +4,15 @@
   <header>
 #include "autopilot.h"
   </header>
+  <optimization sim_run_time="5"
+                udales_input="./input/udales_input/001"
+                pprz_base_trace="./Kaze/input/base_trace/23_02_01__20_35_40.data"
+                num_cpus="5"
+                start_sim_num="1"
+                population="1"
+                nsga2_pop="5"
+                nsga2_num_gen="10"
+                batch_name="batch_1"/>
   <atmosphere>
       <humidity min="5.0" max="30.0"/>
       <pressure min="95500" max="103000"/>
